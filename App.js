@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {StatusBar} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -12,8 +12,13 @@ import EditPost from './Screens/EditPost';
 import UserPost from './Screens/UserPost';
 import ResetPassword from './Screens/ResetPassword';
 import ForgotPassword from './Screens/ForgotPassword';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
+  const [isLoggedIn,setIsLoggedIn] = useState(false)
+  const [username,setUsername] = useState(null)
+  const [sname,setSname] = useState(null)
+
   const theme = {
     ...DefaultTheme,
     colors: {
@@ -24,6 +29,18 @@ export default function App() {
   };
 
   const Stack = createNativeStackNavigator()
+
+  try {
+    const loginKey = await AsyncStorage.getItem('LOGIN_TOKEN')
+    const USERNAME = await AsyncStorage.getItem('USERNAME')
+    const SNAME = await AsyncStorage.getItem('SNAME')
+    
+    if(loginKey !== null) {
+
+    }
+  } catch (error) {
+    
+  }
 
   return (
     <React.Fragment>
