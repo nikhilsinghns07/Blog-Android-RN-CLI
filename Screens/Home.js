@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react'
 import { ScrollView } from 'react-native';
-import { Avatar,Card, Paragraph,Text,Divider,ActivityIndicator, MD2Colors} from 'react-native-paper';
+import { Avatar,Card, Paragraph,Text,Divider,ActivityIndicator, MD2Colors, Button} from 'react-native-paper';
 
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
@@ -26,9 +26,19 @@ const Home = () => {
         fetchPosts()
     }, [])
 
+    const logouthandler = async () => {
+        const keys = ['LOGIN_TOKEN','USERNAME','SNAME']
+        try {
+            await AsyncStorage.multiRemove(keys)
+        } catch(e) {
+            // remove error
+        }
+    }
+
     return (
         <ScrollView>
             {loading === true ? <ActivityIndicator animating={true} color={MD2Colors.red800} size='large' /> : null}
+            <Button onPress={() => {logouthandler()}}> Logout </Button>
             {posts?.map((post,idx) =>
             <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>
                 <Card.Title title={post.title} subtitle={post.author} left={LeftContent} />

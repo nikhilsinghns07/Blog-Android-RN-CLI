@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {StatusBar} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -30,17 +30,29 @@ export default function App() {
 
   const Stack = createNativeStackNavigator()
 
-  try {
-    const loginKey = await AsyncStorage.getItem('LOGIN_TOKEN')
-    const USERNAME = await AsyncStorage.getItem('USERNAME')
-    const SNAME = await AsyncStorage.getItem('SNAME')
-    
-    if(loginKey !== null) {
-
+  const validations = async () => {
+    let keys = []
+    try {
+      keys = await AsyncStorage.getAllKeys()
+      const UNAME =  await AsyncStorage.getItem('USERNAME')
+      setUsername(UNAME)
+    } catch(e) {
+      // read key error
     }
-  } catch (error) {
-    
+
+    const loginToken = AsyncStorage.getItem('LOGIN_TOKEN')
+
+    if(loginToken == null) {
+      console.log("not Logged In")
+    }
+    if(loginToken != null) {
+      console.log('Logged In')
+      setIsLoggedIn(true)
+    }
   }
+  useEffect(() => {
+    validations()
+  },[validations])
 
   return (
     <React.Fragment>
@@ -54,7 +66,9 @@ export default function App() {
               headerTintColor : '#fff',
               headerTitleStyle : {fontWeight:'bold'},
               headerRight: () => (
-                <Button mode='contained' onPress={() => navigation.navigate('Login')}>Login</Button>
+                <Button mode='contained' onPress={() => navigation.navigate('Login')}>
+                {isLoggedIn === true ? `${username}` : 'Login'}
+                </Button>
               )
             })}/>
 
