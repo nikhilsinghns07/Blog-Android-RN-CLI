@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {  MD3LightTheme as DefaultTheme,Provider as PaperProvider,Button} from 'react-native-paper';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from './Screens/Home';
 import Login from './Screens/Login';
 import Signup from './Screens/SignUp';
@@ -19,7 +19,7 @@ const Root = () => {
   const [isLoggedIn,setIsLoggedIn] = useState(false)
   const [username,setUsername] = useState(null)
   const [sname,setSname] = useState(null)
-  
+
   const Tab = createBottomTabNavigator();
   const validations = async () => {
     let keys = []
@@ -45,30 +45,48 @@ const Root = () => {
     validations()
   },[validations])
   return(
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+
+        if (route.name === 'Home') {
+          iconName = focused ? 'home' : 'ios-home-outline';
+        } else if (route.name === 'Profile') {
+          iconName = focused ? 'person' : 'person-outline';
+        }else if (route.name === 'CreatePost') {
+          iconName = focused ? 'create' : 'create-outline'
+        }
+
+        return <Ionicons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: 'tomato',
+      tabBarInactiveTintColor: 'gray',
+    })}>
       <Tab.Screen name="Home" component={Home}  options={({navigation}) => ({
-              headerTitle: 'Home',
-              headerStyle : {backgroundColor:'#f4511e'},
-              headerTintColor : '#fff',
-              headerTitleStyle : {fontWeight:'bold'},
-              headerRight: () => (
-                <Button mode='contained' onPress={() => navigation.navigate('Login')}>
-                {isLoggedIn === true ? `${username}` : 'Login'}
-                </Button>
-              )
-            })}/>
-    <Tab.Screen name="Profile" component={UserPost} options={{
-      headerTitle : 'UserPost',
-      headerStyle : {backgroundColor:'#f4511e'},
-      headerTintColor : '#fff',
-      headerTitleStyle : {fontWeight:'bold'}   
-    }}/>
-    <Tab.Screen name="CreatePost" component={CreatePost} options={{
-      headerTitle : 'CreatePost',
-      headerStyle : {backgroundColor:'#f4511e'},
-      headerTintColor : '#fff',
-      headerTitleStyle : {fontWeight:'bold'}
-    }}/>
+        
+        headerTitle: 'Home',
+        headerStyle : {backgroundColor:'#f4511e'},
+        headerTintColor : '#fff',
+        headerTitleStyle : {fontWeight:'bold'},
+        headerRight: () => (
+          <Button mode='contained' onPress={() => navigation.navigate('Login')}>
+            {isLoggedIn === true ? `${username}` : 'Login'}
+          </Button>
+          )
+        })}/>
+        <Tab.Screen name="CreatePost" component={CreatePost} options={{
+          headerTitle : 'CreatePost',
+          headerStyle : {backgroundColor:'#f4511e'},
+          headerTintColor : '#fff',
+          headerTitleStyle : {fontWeight:'bold'}
+        }}/>
+        <Tab.Screen name="Profile" component={UserPost} options={{
+          headerTitle : 'UserPost',
+          headerStyle : {backgroundColor:'#f4511e'},
+          headerTintColor : '#fff',
+          headerTitleStyle : {fontWeight:'bold'}   
+        }}/>
+       
     </Tab.Navigator>
   )
 }
