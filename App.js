@@ -21,6 +21,7 @@ const Root = () => {
   const [sname,setSname] = useState(null)
 
   const Tab = createBottomTabNavigator();
+  
   const validations = async () => {
     let keys = []
     try {
@@ -31,19 +32,17 @@ const Root = () => {
       // read key error
     }
 
-    const loginToken = AsyncStorage.getItem('LOGIN_TOKEN')
-
-    if(loginToken == null) {
-      console.log("not Logged In")
-    }
-    if(loginToken != null) {
-      console.log('Logged In')
-      setIsLoggedIn(true)
-    }
+    keys.forEach(el => {
+      if(el == 'LOGIN_TOKEN'){
+          setIsLoggedIn(true)
+      }
+    })
   }
+
   useEffect(() => {
     validations()
   },[validations])
+  
   return(
     <Tab.Navigator screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -56,43 +55,64 @@ const Root = () => {
         }else if (route.name === 'CreatePost') {
           iconName = focused ? 'create' : 'create-outline'
         }
+        else if(route.name === 'Login') {
+          iconName = focused ? 'log-in' : 'log-in-outline'
+        }
 
         return <Ionicons name={iconName} size={size} color={color} />;
       },
       tabBarActiveTintColor: 'tomato',
       tabBarInactiveTintColor: 'gray',
     })}>
+
       <Tab.Screen name="Home" component={Home}  options={({navigation}) => ({
         
-        headerTitle: 'Home',
+        headerTitle: 'NS07',
         headerStyle : {backgroundColor:'#f4511e'},
         headerTintColor : '#fff',
         headerTitleStyle : {fontWeight:'bold'},
-        headerRight: () => (
-          <Button mode='contained' onPress={() => navigation.navigate('Login')}>
-            {isLoggedIn === true ? `${username}` : 'Login'}
-          </Button>
-          )
+        // headerRight: () => (
+        //   <Button mode='contained' onPress={() => navigation.navigate('Login')}>
+        //     {isLoggedIn === true ? `${username}` : 'Login'}
+        //   </Button>
+        //   )
         })}/>
+
+        {isLoggedIn ?
         <Tab.Screen name="CreatePost" component={CreatePost} options={{
           headerTitle : 'CreatePost',
           headerStyle : {backgroundColor:'#f4511e'},
           headerTintColor : '#fff',
           headerTitleStyle : {fontWeight:'bold'}
-        }}/>
+        }}/> : null
+        }
+        
+        
+        {isLoggedIn ? 
         <Tab.Screen name="Profile" component={UserPost} options={{
           headerTitle : 'UserPost',
           headerStyle : {backgroundColor:'#f4511e'},
           headerTintColor : '#fff',
           headerTitleStyle : {fontWeight:'bold'}   
-        }}/>
+        }}/> : null}
+
+        {!isLoggedIn ?
+           <Tab.Screen name="Login" component={Login} options={{
+            headerTitle : 'Login',
+            headerStyle : {backgroundColor:'#f4511e'},
+            headerTintColor : '#fff',
+            headerTitleStyle : {fontWeight:'bold'},
+            
+        }}/> : null
+        }
+       
+        
        
     </Tab.Navigator>
   )
 }
 
-export default function App() {
-  
+const App = () => {
 
   const theme = {
     ...DefaultTheme,
@@ -104,25 +124,16 @@ export default function App() {
   };
 
   const Stack = createNativeStackNavigator()
- 
-
-  
 
   return (
     <React.Fragment>
       <StatusBar />
       <PaperProvider theme={theme}>
         <NavigationContainer>
+
           <Stack.Navigator>  
           <Stack.Screen name="Root" component={Root} options={{ headerShown: false }}/>
-          <Stack.Screen name="Login" component={Login} options={{
-            headerTitle : 'Login',
-            headerStyle : {backgroundColor:'#f4511e'},
-            headerTintColor : '#fff',
-            headerTitleStyle : {fontWeight:'bold'},
-            
-          }}/>
-          
+
           <Stack.Screen name="Signup" component={Signup} options={{
             headerTitle : 'Signup',
             headerStyle : {backgroundColor:'#f4511e'},
@@ -158,3 +169,5 @@ export default function App() {
     </React.Fragment>
   );
 }
+
+export default App

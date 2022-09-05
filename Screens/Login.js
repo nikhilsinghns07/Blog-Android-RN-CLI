@@ -28,7 +28,6 @@ const Login = ({navigation}) => {
         })
         .then((res) => res.json())
         .then(data => {
-            console.log(data)
             setError('')
             setEmail('')
             setPassword('')
@@ -38,7 +37,6 @@ const Login = ({navigation}) => {
                 return
             }
 
-            
             try {
                 AsyncStorage.setItem('LOGIN_TOKEN',data.token)
                 AsyncStorage.setItem('USERNAME',data.username)
@@ -46,7 +44,7 @@ const Login = ({navigation}) => {
             } catch (error) {
                 console.log(error)
             }
-            navigation.replace('Home')
+            navigation.replace('Root')
         
         })
     }
@@ -54,7 +52,7 @@ const Login = ({navigation}) => {
     return (
         <React.Fragment>
            <Card  style={{margin:10,padding:15,borderRadius:20}}>
-                <TextInput label="Email"  mode="outlined"   onChangeText={(text) => setEmail(text)} />
+                <TextInput label="Email"  mode="outlined"  onChangeText={(text) => setEmail(text)} />
                 <TextInput label="Password" mode ="outlined" secureTextEntry={true} onChangeText={(text) => setPassword(text)} />
 
                 <View style={styles.buttonContainer}>
