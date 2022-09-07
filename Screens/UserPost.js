@@ -1,49 +1,94 @@
 import React, { useState,useEffect } from 'react'
-import {Text} from 'react-native'
+import { ScrollView, View } from 'react-native';
+import { Avatar,Card, Paragraph,Text,Divider,ActivityIndicator, MD2Colors, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CreatePost from './CreatePost';
 
+const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
-const UserPost =  ({navigation}) => {
-    const [post,setPost] = useState()
-    const [loggedIn,setIsLoggedIn] = useState(false)
-    const [username,setUsername] = useState(null)
+const UserPost = ({navigation,data}) => {
 
-    const validation = async () => {
-        let keys = []
-        try{
-            keys = await AsyncStorage.getAllKeys()
-            const UNAME =  await AsyncStorage.getItem('USERNAME')
-            setUsername(UNAME)
-        }catch(e) {
-            console.log(e)
-        }
-        
-        
-        keys.forEach(el => {
-          if(el == 'LOGIN_TOKEN'){
-              setIsLoggedIn(true)
-          }
+    const logouthandler = async () => {
+        const token = await AsyncStorage.getItem('LOGIN_TOKEN')
+        AsyncStorage.removeItem('LOGIN_TOKEN')
+        navigation.navigate('Root')
+    }
+
+    const [posts,setPost] = useState()
+    
+    const [loading,setLoading] = useState(false)
+    
+    const fetchUserPost = () => {
+        setLoading(true)
+        fetch('https://api-nikhilsingh7.herokuapp.com/userpost',{
+            method:"POST",
+            headers: {
+                "Content-Type" : "application/json"
+            },
+            body:JSON.stringify({
+                "username" : data
+            })
+        }).then(res => res.json())
+        .then(data => {
+            setLoading(false)
+            setPost(data.posts)     
         })
     }
 
-    if(loggedIn == true){
-        console.log('LoggedIn')
+    const editPostHandler = (id) => {
+       // set id to delete
+       navigation.navigate('EditPost')
     }
 
-    if(loggedIn == false) {
-        console.log('Not Logged In')
-        navigation.navigate('/Login')
+    const deletePostHandler = (id) => {
+        fetch('https://api-nikhilsingh7.herokuapp.com/deletepost',{
+            method : "POST",
+            headers: {
+                "Content-Type" : "application/json"
+            },
+            body:JSON.stringify({
+                "postId" : id
+            })
+        }).then(res => res.json())
+        .then(data => {
+            if(data.success === "Deleted"){
+                navigation.replace('Profile')
+            }
+        })
     }
- 
+
+    
+
     useEffect(() => {
-        validation()
-    },[validation])
-      
+        fetchUserPost()
+    },[])
 
     return (
         <React.Fragment>
-            <Text>UserPost Page</Text>
+            <ScrollView>
+                <View>
+                    {loading === true ? <ActivityIndicator animating={true} color={MD2Colors.red800} size='large' /> : null}
+
+                    <View style={{display:'flex',flexDirection:'row',justifyContent:'space-around'}}>
+                        <Text style={{fontWeight:'400',fontSize:20,paddingTop:5}}>MY Posts</Text>
+                        <Button onPress={() => {logouthandler()}}> Logout </Button>
+                    </View>
+                    
+                    {posts?.map((post,idx) =>
+                    <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>
+                        <Card.Title title={post.title} subtitle={post.author} left={LeftContent} />
+                        <Card.Content>
+                            <Card.Cover source={{uri: post?.imageUrl || 'https://source.unsplash.com/random'}} />
+                            <Paragraph  style={{padding:10,fontWeight:'600',fontSize:20}}>{post.content}</Paragraph>
+                            <Text variant="titleMedium" style={{padding:10}}>{new Date(post.date).toDateString()}</Text>
+                        </Card.Content>
+                    <Divider />
+                    <Button> Edit Post </Button>
+                    <Button> Delete Post</Button>
+                    </Card>
+                    ) 
+                    || <Text style={{fontWeight:'bold',fontSize:20,textAlign:'center'}}>No Post Found</Text>} 
+                </View>
+            </ScrollView>
         </React.Fragment>
     )
 }

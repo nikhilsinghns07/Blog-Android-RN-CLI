@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import {StatusBar} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -18,8 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Root = () => {
   const [isLoggedIn,setIsLoggedIn] = useState(false)
   const [username,setUsername] = useState(null)
-  const [sname,setSname] = useState(null)
-
+  
   const Tab = createBottomTabNavigator();
   
   const validations = async () => {
@@ -28,6 +27,7 @@ const Root = () => {
       keys = await AsyncStorage.getAllKeys()
       const UNAME =  await AsyncStorage.getItem('USERNAME')
       setUsername(UNAME)
+      
     } catch(e) {
       // read key error
     }
@@ -66,48 +66,47 @@ const Root = () => {
     })}>
 
       <Tab.Screen name="Home" component={Home}  options={({navigation}) => ({
-        
         headerTitle: 'NS07',
         headerStyle : {backgroundColor:'#f4511e'},
         headerTintColor : '#fff',
-        headerTitleStyle : {fontWeight:'bold'},
-        // headerRight: () => (
-        //   <Button mode='contained' onPress={() => navigation.navigate('Login')}>
-        //     {isLoggedIn === true ? `${username}` : 'Login'}
-        //   </Button>
-        //   )
+        headerTitleStyle : {fontWeight:'bold'}
         })}/>
 
-        {isLoggedIn ?
-        <Tab.Screen name="CreatePost" component={CreatePost} options={{
+      {isLoggedIn ?
+      <Tab.Screen name="CreatePost" component={CreatePost} options={{
           headerTitle : 'CreatePost',
           headerStyle : {backgroundColor:'#f4511e'},
           headerTintColor : '#fff',
-          headerTitleStyle : {fontWeight:'bold'}
-        }}/> : null
-        }
+          headerTitleStyle : {fontWeight:'bold'},
+          headerTintColor : '#fff'
+      }}/> : null
+      }
         
-        
-        {isLoggedIn ? 
-        <Tab.Screen name="Profile" component={UserPost} options={{
-          headerTitle : 'UserPost',
-          headerStyle : {backgroundColor:'#f4511e'},
+      {isLoggedIn ? 
+      <Tab.Screen name="Profile" children={()=><UserPost data={username}/> } options={({navigation}) => ({
+          headerTitle: 'Profile',
+          headerStyle: {backgroundColor:'#f4511e'},
           headerTintColor : '#fff',
-          headerTitleStyle : {fontWeight:'bold'}   
-        }}/> : null}
+          headerTitleStyle : {fontWeight:'bold'},
+          headerTintColor : '#fff',
+          headerRight: () => (
+            <Button mode="elevated" onPress={() => {
+              const token =  AsyncStorage.getItem('LOGIN_TOKEN')
+              AsyncStorage.removeItem('LOGIN_TOKEN')
+              navigation.navigate('Home')
+            }}> Logout </Button>
+          )
+      })} /> : null}
 
-        {!isLoggedIn ?
-           <Tab.Screen name="Login" component={Login} options={{
+      {!isLoggedIn ?
+          <Tab.Screen name="Login" component={Login} options={{
             headerTitle : 'Login',
             headerStyle : {backgroundColor:'#f4511e'},
             headerTintColor : '#fff',
             headerTitleStyle : {fontWeight:'bold'},
             
-        }}/> : null
-        }
-       
-        
-       
+      }}/> : null
+      }  
     </Tab.Navigator>
   )
 }
