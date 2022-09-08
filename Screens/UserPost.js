@@ -7,12 +7,6 @@ const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
 const UserPost = ({navigation,data}) => {
 
-    const logouthandler = async () => {
-        const token = await AsyncStorage.getItem('LOGIN_TOKEN')
-        AsyncStorage.removeItem('LOGIN_TOKEN')
-        navigation.navigate('Root')
-    }
-
     const [posts,setPost] = useState()
     
     const [loading,setLoading] = useState(false)
@@ -68,10 +62,7 @@ const UserPost = ({navigation,data}) => {
                 <View>
                     {loading === true ? <ActivityIndicator animating={true} color={MD2Colors.red800} size='large' /> : null}
 
-                    <View style={{display:'flex',flexDirection:'row',justifyContent:'space-around'}}>
-                        <Text style={{fontWeight:'400',fontSize:20,paddingTop:5}}>MY Posts</Text>
-                        <Button onPress={() => {logouthandler()}}> Logout </Button>
-                    </View>
+                   
                     
                     {posts?.map((post,idx) =>
                     <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>

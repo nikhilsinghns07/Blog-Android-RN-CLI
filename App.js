@@ -93,7 +93,7 @@ const Root = () => {
             <Button mode="elevated" onPress={() => {
               const token =  AsyncStorage.getItem('LOGIN_TOKEN')
               AsyncStorage.removeItem('LOGIN_TOKEN')
-              navigation.navigate('Home')
+              navigation.replace('Root')
             }}> Logout </Button>
           )
       })} /> : null}
