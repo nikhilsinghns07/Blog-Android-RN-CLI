@@ -65,12 +65,12 @@ const Root = () => {
       tabBarInactiveTintColor: 'gray',
     })}>
 
-      <Tab.Screen name="Home" component={Home}  options={({navigation}) => ({
+      <Tab.Screen name="Home" component={Home}  options={{
         headerTitle: 'NS07',
         headerStyle : {backgroundColor:'#f4511e'},
         headerTintColor : '#fff',
         headerTitleStyle : {fontWeight:'bold'}
-        })}/>
+      }}/>
 
       {isLoggedIn ?
       <Tab.Screen name="CreatePost" component={CreatePost} options={{
@@ -82,8 +82,9 @@ const Root = () => {
       }}/> : null
       }
         
-      {isLoggedIn ? 
-      <Tab.Screen name="Profile" children={()=><UserPost data={username}/> } options={({navigation}) => ({
+      {isLoggedIn ?
+
+      <Tab.Screen name="Profile" children={({navigation})=><UserPost data={username}/> } options={{
           headerTitle: 'Profile',
           headerStyle: {backgroundColor:'#f4511e'},
           headerTintColor : '#fff',
@@ -96,7 +97,7 @@ const Root = () => {
               navigation.replace('Root')
             }}> Logout </Button>
           )
-      })} /> : null}
+      }} /> : null}
 
       {!isLoggedIn ?
           <Tab.Screen name="Login" component={Login} options={{
@@ -105,8 +106,8 @@ const Root = () => {
             headerTintColor : '#fff',
             headerTitleStyle : {fontWeight:'bold'},
             
-      }}/> : null
-      }  
+      }}/> : null}
+
     </Tab.Navigator>
   )
 }

@@ -1,15 +1,25 @@
-import React, { useState,useEffect } from 'react'
-import { ScrollView, View } from 'react-native';
+import React, { useState,useEffect,useCallback } from 'react'
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { Avatar,Card, Paragraph,Text,Divider,ActivityIndicator, MD2Colors, Button} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import EditPost from './EditPost'
 
 const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+const UserPost = ({data}) => {
+    const [refreshing,setRefreshing] = useState(false)
 
-const UserPost = ({navigation,data}) => {
-
-    const [posts,setPost] = useState()
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        fetchUserPost()
+        wait(2000).then(() => setRefreshing(false))
+    },[])
     
+    const [posts,setPost] = useState()
     const [loading,setLoading] = useState(false)
+    const [editMode,setEditMode] = useState(false)
+    const [postId,setPostId] = useState('')
     
     const fetchUserPost = () => {
         setLoading(true)
@@ -24,14 +34,16 @@ const UserPost = ({navigation,data}) => {
         }).then(res => res.json())
         .then(data => {
             setLoading(false)
-            setPost(data.posts)     
+            setPost(data.posts)
         })
     }
 
     const editPostHandler = (id) => {
-       // set id to delete
-       navigation.navigate('EditPost')
+        setPostId(id)
+        setEditMode(true)
     }
+
+    
 
     const deletePostHandler = (id) => {
         fetch('https://api-nikhilsingh7.herokuapp.com/deletepost',{
@@ -45,10 +57,13 @@ const UserPost = ({navigation,data}) => {
         }).then(res => res.json())
         .then(data => {
             if(data.success === "Deleted"){
-                navigation.replace('Profile')
+                onRefresh()
+
             }
         })
     }
+
+
 
     
 
@@ -58,12 +73,20 @@ const UserPost = ({navigation,data}) => {
 
     return (
         <React.Fragment>
-            <ScrollView>
+            <ScrollView refreshControl={
+                <RefreshControl 
+                refreshing={refreshing}
+                onRefresh={onRefresh}/>
+            }>
+                
+                {editMode ?
+                <View>
+                    <EditPost data={postId}/> 
+                    <Button onPress={() => {setEditMode(false)}}>Close</Button>
+                </View> : null}
                 <View>
                     {loading === true ? <ActivityIndicator animating={true} color={MD2Colors.red800} size='large' /> : null}
 
-                   
-                    
                     {posts?.map((post,idx) =>
                     <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>
                         <Card.Title title={post.title} subtitle={post.author} left={LeftContent} />
@@ -73,12 +96,14 @@ const UserPost = ({navigation,data}) => {
                             <Text variant="titleMedium" style={{padding:10}}>{new Date(post.date).toDateString()}</Text>
                         </Card.Content>
                     <Divider />
-                    <Button> Edit Post </Button>
-                    <Button> Delete Post</Button>
+                    <Button onPress={() => {editPostHandler(post._id)}}> Edit Post </Button>
+                    <Button onPress={() => {deletePostHandler(post._id)}}> Delete Post</Button>
                     </Card>
                     ) 
                     || <Text style={{fontWeight:'bold',fontSize:20,textAlign:'center'}}>No Post Found</Text>} 
                 </View>
+
+
             </ScrollView>
         </React.Fragment>
     )
