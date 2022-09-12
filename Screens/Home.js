@@ -52,6 +52,7 @@ const Home = () => {
                 <Text style={{textAlign:'center'}}>Fetching Post....</Text>
             </View>
             : null}
+            
             <View style={{display : 'flex',flexDirection: 'column',alignItems : 'center',}}>
                 {error ? <HelperText  type="error"> {error} </HelperText> : null}
             </View>
