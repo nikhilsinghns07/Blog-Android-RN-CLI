@@ -57,18 +57,23 @@ const Home = () => {
                 {error ? <HelperText  type="error"> {error} </HelperText> : null}
             </View>
            
-            {posts?.map((post,idx) =>
-            <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>
-                <Card.Title title={post.title} subtitle={post.author} left={LeftContent} />
-                <Card.Content>
-                    <Card.Cover source={{uri: post?.imageUrl || 'https://source.unsplash.com/random'}} />
-                    <Paragraph  style={{padding:10,fontWeight:'600',fontSize:20}}>{post.content}</Paragraph>
-                    <Text variant="titleMedium" style={{padding:10}}>{new Date(post.date).toDateString()}</Text>
-                </Card.Content>
-            <Divider />
-            </Card>
-            ) 
-            || <Text>No Post Found</Text>} 
+            {posts?.length > 0 ? (
+                posts.map((post,idx) => (
+                    <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>
+                        <Card.Title title={post.title} subtitle={post.author} left={LeftContent} />
+                        <Card.Content>
+                            <Card.Cover source={{uri: post?.imageUrl || 'https://source.unsplash.com/random'}} />
+                            <Paragraph  style={{padding:10,fontWeight:'600',fontSize:20}}>{post.content}</Paragraph>
+                            <Text variant="titleMedium" style={{padding:10}}>{new Date(post.date).toDateString()}</Text>
+                        </Card.Content>
+                        <Divider />
+                    </Card>
+                ))
+            ) : 
+            <View>
+                <Text style={{fontSize: 25,color:'red',textAlign:'center',padding: 8}}>No Posts Found</Text>                
+            </View>
+        }
         </ScrollView>
     )
 }
@@ -76,3 +81,4 @@ const Home = () => {
 
 
 export default Home
+

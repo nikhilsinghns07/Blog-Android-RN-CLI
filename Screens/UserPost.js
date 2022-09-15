@@ -1,51 +1,46 @@
-import React, { useState,useEffect,useCallback } from 'react'
-import { RefreshControl, ScrollView, View } from 'react-native';
-import { Avatar,Card, Paragraph,Text,Divider,ActivityIndicator, MD2Colors, Button} from 'react-native-paper';
-import EditPost from './EditPost'
+import React,{useEffect, useState,useCallback} from 'react'
+import {Text,Button,Card,Paragraph,ActivityIndicator,MD2Colors,HelperText} from 'react-native-paper';
+import {View,StyleSheet,ScrollView,Image,RefreshControl} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import img from '../img/bg1.jpg'
 
-const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
-const UserPost = ({data}) => {
-    const [refreshing,setRefreshing] = useState(false)
 
-    const onRefresh = useCallback(() => {
-        setRefreshing(true)
-        fetchUserPost()
-        wait(2000).then(() => setRefreshing(false))
-    },[])
-    
-    const [posts,setPost] = useState()
+
+const UserPost = ({navigation}) => {
     const [loading,setLoading] = useState(false)
-    const [editMode,setEditMode] = useState(false)
-    const [postId,setPostId] = useState('')
-    
-    const fetchUserPost = () => {
-        setLoading(true)
-        fetch('https://api-nikhilsingh7.herokuapp.com/userpost',{
+    const [refreshing,setRefreshing] = useState(false)
+    const [sucess,setSuccess] = useState('')
+    const [userPost,setUserPost] = useState([])
+
+    const fetchUserPost = async() => {
+        
+        let keys = []
+        try{
+            keys = await AsyncStorage.getAllKeys()
+            const UNAME = await AsyncStorage.getItem('USERNAME')
+            setLoading(true)
+            fetch('https://api-nikhilsingh7.herokuapp.com/userpost',{
             method:"POST",
             headers: {
                 "Content-Type" : "application/json"
             },
             body:JSON.stringify({
-                "username" : data
+                "username" : UNAME
             })
         }).then(res => res.json())
         .then(data => {
             setLoading(false)
-            setPost(data.posts)
+            setUserPost(data.posts)     
         })
+        }catch(e) {console.log(e)}
     }
 
-    const editPostHandler = (id) => {
-        setPostId(id)
-        setEditMode(true)
-    }
+    const EditPostNavigator = (id) => {navigation.navigate('EditPost',{postId : id})}
 
-    
-
-    const deletePostHandler = (id) => {
+    const DeletePostHandler = (id) => {
         fetch('https://api-nikhilsingh7.herokuapp.com/deletepost',{
             method : "POST",
             headers: {
@@ -57,56 +52,96 @@ const UserPost = ({data}) => {
         }).then(res => res.json())
         .then(data => {
             if(data.success === "Deleted"){
-                onRefresh()
-
+                setSuccess('Post Deleted')
+                wait(2000).then(() => {
+                    onRefresh()
+                })
             }
         })
     }
 
-
-
-    
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        setSuccess('')
+        fetchUserPost()
+        wait(2000).then(() => setRefreshing(false))
+    },[])
 
     useEffect(() => {
         fetchUserPost()
     },[])
 
     return (
-        <React.Fragment>
-            <ScrollView refreshControl={
-                <RefreshControl 
-                refreshing={refreshing}
-                onRefresh={onRefresh}/>
-            }>
-                
-                {editMode ?
+        <ScrollView style={{backgroundColor:'lightblue'}} refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+        }>
+
+            <View>
+                {loading === true ? 
                 <View>
-                    <EditPost data={postId}/> 
-                    <Button onPress={() => {setEditMode(false)}}>Close</Button>
+                    <ActivityIndicator animating={true} size='small' color={MD2Colors.red800}  />
+                    <Text style={styles.loadingText}>Fetching Post....</Text>
                 </View> : null}
-                <View>
-                    {loading === true ? <ActivityIndicator animating={true} color={MD2Colors.red800} size='large' /> : null}
 
-                    {posts?.map((post,idx) =>
-                    <Card key={idx} style={{margin:10,padding:5,backgroundColor:'#8bc6f0',borderRadius:20}}>
-                        <Card.Title title={post.title} subtitle={post.author} left={LeftContent} />
-                        <Card.Content>
-                            <Card.Cover source={{uri: post?.imageUrl || 'https://source.unsplash.com/random'}} />
-                            <Paragraph  style={{padding:10,fontWeight:'600',fontSize:20}}>{post.content}</Paragraph>
-                            <Text variant="titleMedium" style={{padding:10}}>{new Date(post.date).toDateString()}</Text>
-                        </Card.Content>
-                    <Divider />
-                    <Button onPress={() => {editPostHandler(post._id)}}> Edit Post </Button>
-                    <Button onPress={() => {deletePostHandler(post._id)}}> Delete Post</Button>
-                    </Card>
-                    ) 
-                    || <Text style={{fontWeight:'bold',fontSize:20,textAlign:'center'}}>No Post Found</Text>} 
-                </View>
+                {sucess ? <Text style={styles.sucessText}> {sucess} </Text> : null}
+            </View>
 
+            <Image source={img} style={styles.topImg}/>
 
-            </ScrollView>
-        </React.Fragment>
+            {userPost?.length > 0 ? (
+                (userPost.map((post,idx) => 
+                <Card style={styles.topCard} key={idx}>
+                    <Card.Title title={post.title} subtitle={`by  ${post.author}`}/>
+                    <Text style={styles.date}>{new Date(post.date).toDateString()}</Text>
+                    <Card.Cover source={{ uri:post?.imageUrl || 'https://source.unsplash.com/random' }} />
+                    <Card.Content>
+                        <Paragraph>{post.content}</Paragraph>
+                    </Card.Content>
+                    <View style={styles.buttonContainer}> 
+                        <Button onPress={() => {EditPostNavigator(post._id)}}> Edit </Button>
+                        <Button onPress={() => {DeletePostHandler(post._id)}} > Delete </Button>
+                    </View>
+                </Card>
+                ))
+            ) : <View>
+                    <Text style={styles.noPostText}>No Posts Found</Text>                
+                    <Button mode="contained"onPress={() => {navigation.navigate('CreatePost')}}> Create a Post</Button>
+                </View>}
+            
+        </ScrollView>
     )
 }
 
+
+const styles = StyleSheet.create({
+    topImg : {
+        width:'100%',height:200
+    },
+
+    topCard : {
+        padding: 10,
+        borderRadius: 20,
+
+    },
+    date : {
+        paddingLeft :15,
+        paddingBottom: 10
+    },
+    buttonContainer : {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent : 'flex-end'
+    },
+    loadingText : {
+        textAlign:'center',
+        color:'black',
+        fontSize:20
+    },
+    sucessText : {
+        color : 'green',
+        fontSize : 18, 
+        textAlign : 'center'
+    },
+    noPostText : {fontSize: 25,color:'red',textAlign:'center',padding: 8}
+})
 export default UserPost

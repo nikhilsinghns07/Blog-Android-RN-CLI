@@ -82,22 +82,12 @@ const Root = () => {
       }}/> : null
       }
         
-      {isLoggedIn ?
-
-      <Tab.Screen name="Profile" children={({navigation})=><UserPost data={username}/> } options={{
-          headerTitle: 'Profile',
-          headerStyle: {backgroundColor:'#f4511e'},
-          headerTintColor : '#fff',
-          headerTitleStyle : {fontWeight:'bold'},
-          headerTintColor : '#fff',
-          headerRight: () => (
-            <Button mode="elevated" onPress={() => {
-              const token =  AsyncStorage.getItem('LOGIN_TOKEN')
-              AsyncStorage.removeItem('LOGIN_TOKEN')
-              navigation.replace('Root')
-            }}> Logout </Button>
-          )
-      }} /> : null}
+      {isLoggedIn ? <Tab.Screen name="Profile" component={UserPost} options={{
+        headerTitle : `${username}`,
+        headerStyle : {backgroundColor:'#f4511e'},
+        headerTintColor : '#fff',
+        headerTitleStyle : {fontWeight:'bold'}
+      }}/> : null} 
 
       {!isLoggedIn ?
           <Tab.Screen name="Login" component={Login} options={{

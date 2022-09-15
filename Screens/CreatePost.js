@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import {Text,ActivityIndicator, MD2Colors,TextInput, Button,Card} from 'react-native-paper';
-import {View,StyleSheet, KeyboardAvoidingView,ScrollView,HelperText} from 'react-native';
+import {View,StyleSheet, KeyboardAvoidingView,ScrollView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const wait = (timeout) => {
@@ -62,7 +62,6 @@ const CreatePost = ({navigation}) => {
 
                 wait(5000).then(() => {
                     setSucess(null)
-                    navigation.navigate('Home')
                 })
             })
 
