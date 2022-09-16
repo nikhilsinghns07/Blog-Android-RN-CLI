@@ -22,6 +22,7 @@ const Root = () => {
   const Tab = createBottomTabNavigator();
   
   const validations = async () => {
+
     let keys = []
     try {
       keys = await AsyncStorage.getAllKeys()
@@ -73,6 +74,7 @@ const Root = () => {
       }}/>
 
       {isLoggedIn ?
+
       <Tab.Screen name="CreatePost" component={CreatePost} options={{
           headerTitle : 'CreatePost',
           headerStyle : {backgroundColor:'#f4511e'},
@@ -86,7 +88,16 @@ const Root = () => {
         headerTitle : `${username}`,
         headerStyle : {backgroundColor:'#f4511e'},
         headerTintColor : '#fff',
-        headerTitleStyle : {fontWeight:'bold'}
+        headerTitleStyle : {fontWeight:'bold'},
+        headerRight : (({navigation}) => (
+          <Button mode='contained' onPress={async () => {
+            try {
+              await AsyncStorage.removeItem('LOGIN_TOKEN')
+              setIsLoggedIn(false)
+              navigation.navigate('Home')
+            }catch (e) {}
+          }}>Logout </Button>
+        ))
       }}/> : null} 
 
       {!isLoggedIn ?

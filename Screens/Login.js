@@ -28,6 +28,7 @@ const Login = ({navigation}) => {
         })
         .then((res) => res.json())
         .then(data => {
+            setIsloading(true)
             setError('')
             setEmail('')
             setPassword('')
