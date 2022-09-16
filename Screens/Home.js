@@ -9,13 +9,10 @@ const wait = (timeout) => {
 }
   
 const Home = () => {
-    
     const [posts,setPosts] = useState([])
     const [loading,setLoading] = useState(false)
     const [error,setError] = useState(null)
     const [refreshing,setRefreshing] = useState(false)
-
-    
 
     const fetchPosts = () => {
         setLoading(true)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TextInput,Button, Card,HelperText} from 'react-native-paper';
+import { TextInput,Button, Card,HelperText,ActivityIndicator,MD2Colors} from 'react-native-paper';
 import { View,StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -45,13 +45,19 @@ const Login = ({navigation}) => {
             } catch (error) {
                 console.log(error)
             }
+            setIsloading(false)
             navigation.replace('Root')
-        
         })
     }
 
     return (
         <React.Fragment>
+            {loading === true ? 
+            <View>
+                <ActivityIndicator animating={true} size='small' color={MD2Colors.red800}  />
+                <Text style={{textAlign:'center'}}>Fetching Post....</Text>
+            </View>
+            : null}
            <Card  style={{margin:10,padding:15,borderRadius:20}}>
                 <TextInput label="Email"  mode="outlined"  onChangeText={(text) => setEmail(text)} />
                 <TextInput label="Password" mode ="outlined" secureTextEntry={true} onChangeText={(text) => setPassword(text)} />
