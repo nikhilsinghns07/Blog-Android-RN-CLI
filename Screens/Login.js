@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TextInput,Button, Card,HelperText,ActivityIndicator,MD2Colors} from 'react-native-paper';
+import { TextInput,Button, Card,HelperText,ActivityIndicator,MD2Colors,Text} from 'react-native-paper';
 import { View,StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -55,7 +55,7 @@ const Login = ({navigation}) => {
             {loading === true ? 
             <View>
                 <ActivityIndicator animating={true} size='small' color={MD2Colors.red800}  />
-                <Text style={{textAlign:'center'}}>Fetching Post....</Text>
+                <Text style={{textAlign:'center'}}>Logging IN....</Text>
             </View>
             : null}
            <Card  style={{margin:10,padding:15,borderRadius:20}}>
