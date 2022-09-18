@@ -11,7 +11,6 @@ import Signup from './Screens/SignUp';
 import CreatePost from './Screens/CreatePost';
 import EditPost from './Screens/EditPost';
 import UserPost from './Screens/UserPost';
-import ResetPassword from './Screens/ResetPassword';
 import ForgotPassword from './Screens/ForgotPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -93,6 +92,8 @@ const Root = () => {
           <Button mode='contained' onPress={async () => {
             try {
               await AsyncStorage.removeItem('LOGIN_TOKEN')
+              await AsyncStorage.removeItem('USERNAME')
+              await AsyncStorage.removeItem('SNAME')
               setIsLoggedIn(false)
               navigation.navigate('Home')
             }catch (e) {}
@@ -148,13 +149,7 @@ const App = () => {
             headerTintColor : '#fff',
             headerTitleStyle : {fontWeight:'bold'}
           }}/>
-        
-          <Stack.Screen name="ResetPassword" component={ResetPassword} options={{
-            headerTitle : 'ResetPassword',
-            headerStyle : {backgroundColor:'#f4511e'},
-            headerTintColor : '#fff',
-            headerTitleStyle : {fontWeight:'bold'}
-          }}/>
+
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{
             headerTitle : 'ForgotPassword',
             headerStyle : {backgroundColor:'#f4511e'},

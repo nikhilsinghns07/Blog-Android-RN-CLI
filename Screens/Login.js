@@ -69,7 +69,7 @@ const Login = ({navigation}) => {
                     <Button mode='contained' onPress={() => navigation.navigate('Signup')}> New ? Create a Free account</Button> 
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button mode="contained-tonal">Forgot Password</Button>
+                    <Button mode="contained-tonal" onPress={() => {navigation.navigate('ForgotPassword')}}>Forgot Password</Button>
                 </View>
 
                 <View style={styles.container}>
