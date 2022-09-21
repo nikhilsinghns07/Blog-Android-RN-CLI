@@ -22,7 +22,6 @@ const CreatePost = ({navigation}) => {
         try{
             keys = await AsyncStorage.getAllKeys()
             const UNAME = await AsyncStorage.getItem('USERNAME')
-            console.log(UNAME)
             if(!title || !content) {
                 setError("Required Title and Content")
                 return

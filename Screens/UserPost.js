@@ -8,7 +8,6 @@ const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-
 const UserPost = ({navigation}) => {
     const [loading,setLoading] = useState(false)
     const [refreshing,setRefreshing] = useState(false)
@@ -16,7 +15,6 @@ const UserPost = ({navigation}) => {
     const [userPost,setUserPost] = useState([])
 
     const fetchUserPost = async() => {
-        
         let keys = []
         try{
             keys = await AsyncStorage.getAllKeys()
@@ -35,7 +33,7 @@ const UserPost = ({navigation}) => {
             setLoading(false)
             setUserPost(data.posts)     
         })
-        }catch(e) {console.log(e)}
+        }catch(e) {}
     }
 
     const EditPostNavigator = (id) => {navigation.navigate('EditPost',{postId : id})}

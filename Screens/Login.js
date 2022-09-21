@@ -42,9 +42,7 @@ const Login = ({navigation}) => {
                 AsyncStorage.setItem('LOGIN_TOKEN',data.token)
                 AsyncStorage.setItem('USERNAME',data.username)
                 AsyncStorage.setItem('SNAME',data.sname)
-            } catch (error) {
-                console.log(error)
-            }
+            } catch (error) {}
             setIsloading(false)
             navigation.replace('Root')
         })

@@ -32,7 +32,6 @@ const ForgotPassword = () => {
         }).then((res) => res.json())
         .then(response => {
             setError(null)
-            console.log(response)
             serverError = response.error
 
             if(serverError) {

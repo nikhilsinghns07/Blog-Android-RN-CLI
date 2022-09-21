@@ -22,7 +22,6 @@ const Home = () => {
             setPosts(data.posts)
             setLoading(false)
         }).catch(err => {
-            console.log(err)
             setError('Some Error Occured')
         })
     }
