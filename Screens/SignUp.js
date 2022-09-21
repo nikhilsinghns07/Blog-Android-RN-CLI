@@ -68,8 +68,8 @@ const SignUp = ({navigation}) => {
            <Card  style={{margin:10,padding:15,borderRadius:20}}>
                 <TextInput label="Username" mode='outlined'  onChangeText={(text) => setUsername(text)}/>
                 <TextInput label="Email" mode='outlined'  onChangeText={(text) => setEmail(text)}/>
-                <TextInput label="Password" mode='outlined'  onChangeText={(text) => setPassword(text)}/>
-                <TextInput label="Confirm Password" mode='outlined'  onChangeText={(text) => setConfirmPassword(text)}/>
+                <TextInput label="Password" mode='outlined' secureTextEntry={true}  onChangeText={(text) => setPassword(text)}/>
+                <TextInput label="Confirm Password" mode='outlined' secureTextEntry={true} onChangeText={(text) => setConfirmPassword(text)}/>
 
                 <View style={styles.conditionalContainer}>
                     <HelperText type='error' style={{textAlign : 'center'}}>{error}</HelperText>

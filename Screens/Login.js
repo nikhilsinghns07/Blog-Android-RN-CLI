@@ -15,6 +15,7 @@ const Login = ({navigation}) => {
             setError('Must Provide the Credentials')
             return
         }
+        setIsloading(true)
 
         await fetch('https://api-nikhilsingh7.herokuapp.com/login',{
             headers :{
@@ -28,7 +29,6 @@ const Login = ({navigation}) => {
         })
         .then((res) => res.json())
         .then(data => {
-            setIsloading(true)
             setError('')
             setEmail('')
             setPassword('')
