@@ -17,11 +17,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Root = () => {
   const [isLoggedIn,setIsLoggedIn] = useState(false)
   const [username,setUsername] = useState(null)
-  
+
   const Tab = createBottomTabNavigator();
   
   const validations = async () => {
-
     let keys = []
     try {
       keys = await AsyncStorage.getAllKeys()

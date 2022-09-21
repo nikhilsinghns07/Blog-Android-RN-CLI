@@ -6,7 +6,6 @@ const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-
 const SignUp = ({navigation}) => {
     const [loading,setIsloading] = useState(false)
     const [error,setError] = useState(null)
